@@ -71,6 +71,30 @@ class _TicketTableReportState extends State<TicketTableReport> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text(
+          'All Tickets Report',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        //  backgroundColor: Colors.deepPurple,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+              gradient:
+                  LinearGradient(colors: [Colors.purple, Colors.deepPurple])),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.power_settings_new_outlined,
+                  size: 30,
+                )),
+          )
+        ],
+      ),
       body: SizedBox(
         width: MediaQuery.of(context).size.width,
         child: Column(

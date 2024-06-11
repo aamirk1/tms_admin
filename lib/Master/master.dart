@@ -1,6 +1,8 @@
 import 'package:admin/Homescreen.dart';
+import 'package:admin/Master/assets/listOfAsset.dart';
 import 'package:admin/Master/designation/listOfDesignation.dart';
 import 'package:admin/Master/itemMaster/itemMaster.dart';
+import 'package:admin/Master/work/listOfDesignation.dart';
 import 'package:flutter/material.dart';
 
 class MasterHomeScreen extends StatefulWidget {
@@ -42,6 +44,7 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            // section first
             Padding(
               padding: const EdgeInsets.only(left: 100),
               child: Row(
@@ -51,14 +54,14 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                     shadowColor: Colors.deepPurple,
                     elevation: 30,
                     child: Container(
-                      height: 150,
+                      height: 80,
                       width: 150,
                       decoration: BoxDecoration(
                           border: Border.all(
-                              color: Color.fromARGB(255, 225, 223, 223),
+                              color: const Color.fromARGB(255, 225, 223, 223),
                               width: 2)),
                       child: IconButton(
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.supervised_user_circle_sharp,
                           size: 70,
                           color: Colors.deepPurple,
@@ -75,7 +78,7 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                     ),
                   ),
                   const SizedBox(
-                    width: 100,
+                    width: 30,
                   ),
                   InkWell(
                     onTap: () {
@@ -88,7 +91,7 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                     child: Container(
                       alignment: Alignment.center,
                       height: 70,
-                      width: 600,
+                      width: 450,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           //color: Color.fromARGB(255, 179, 138, 248)
@@ -106,6 +109,8 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                 ],
               ),
             ),
+
+            // section second
             Padding(
               padding: const EdgeInsets.only(right: 100),
               child: Row(
@@ -122,7 +127,7 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                     child: Container(
                       alignment: Alignment.center,
                       height: 70,
-                      width: 600,
+                      width: 450,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           // color: Color.fromARGB(255, 179, 138, 248)
@@ -138,13 +143,13 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                     ),
                   ),
                   const SizedBox(
-                    width: 100,
+                    width: 30,
                   ),
                   Card(
                     shadowColor: const Color.fromARGB(255, 58, 2, 156),
                     elevation: 30,
                     child: Container(
-                      height: 150,
+                      height: 80,
                       width: 150,
                       decoration: BoxDecoration(
                           border: Border.all(
@@ -169,6 +174,8 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                 ],
               ),
             ),
+
+            // section third
             Padding(
               padding: const EdgeInsets.only(left: 100),
               child: Row(
@@ -178,20 +185,19 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                     shadowColor: Colors.deepPurple,
                     elevation: 30,
                     child: Container(
-                      height: 150,
+                      height: 80,
                       width: 150,
                       decoration: BoxDecoration(
                           border: Border.all(
                               width: 2,
-                              color: Color.fromARGB(255, 225, 223, 223))),
+                              color: const Color.fromARGB(255, 225, 223, 223))),
                       child: IconButton(
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.person,
                           color: Colors.deepPurple,
                           size: 70,
                         ),
                         onPressed: () {
-                          child:
                           _buildCard(
                               'Profile', //const Color.fromARGB(255, 149, 197, 235),
                               () {
@@ -200,27 +206,156 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                               MaterialPageRoute(
                                   builder: (context) => ProfileScreen()),
                             );
-                            print('Profile card is clicked');
                           });
                         },
                       ),
                     ),
                   ),
                   const SizedBox(
-                    width: 100,
+                    width: 30,
                   ),
                   Container(
                     alignment: Alignment.center,
                     height: 70,
-                    width: 600,
+                    width: 450,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         // color: Color.fromARGB(255, 179, 138, 248)
-                        gradient: LinearGradient(
+                        gradient: const LinearGradient(
                             colors: [Colors.purple, Colors.deepPurple])),
                     child: const Text(
-                      'Master to include: Tag Service Provider to each Work',
+                      'Role Assign',
                       style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // section first
+            Padding(
+              padding: const EdgeInsets.only(right: 100),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ListOfAsset()),
+                      );
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      height: 70,
+                      width: 450,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          // color: Color.fromARGB(255, 179, 138, 248)
+                          gradient: const LinearGradient(
+                              colors: [Colors.purple, Colors.deepPurple])),
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Text(
+                          'Assets',
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 30,
+                  ),
+                  Card(
+                    shadowColor: const Color.fromARGB(255, 58, 2, 156),
+                    elevation: 30,
+                    child: Container(
+                      height: 80,
+                      width: 150,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              width: 2,
+                              color: const Color.fromARGB(255, 225, 223, 223))),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.receipt_long_outlined,
+                          size: 70,
+                          color: Colors.deepPurple,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const ListOfAsset()),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // section first
+            Padding(
+              padding: const EdgeInsets.only(left: 100),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Card(
+                    shadowColor: Colors.deepPurple,
+                    elevation: 30,
+                    child: Container(
+                      height: 80,
+                      width: 150,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: const Color.fromARGB(255, 225, 223, 223),
+                              width: 2)),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.supervised_user_circle_sharp,
+                          size: 70,
+                          color: Colors.deepPurple,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const ListOfWork()),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 30,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ListOfWork()),
+                      );
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      height: 70,
+                      width: 450,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          //color: Color.fromARGB(255, 179, 138, 248)
+                          gradient: const LinearGradient(
+                              colors: [Colors.purple, Colors.deepPurple])),
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Text(
+                          'Work List',
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -239,7 +374,7 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
       onTap: onTapCallback,
       child: Card(
         // color: color,
-        child: Container(
+        child: SizedBox(
           height: 200,
           width: 200,
           child: Center(
