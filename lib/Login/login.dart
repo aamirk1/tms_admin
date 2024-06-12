@@ -1,4 +1,6 @@
+import 'package:admin/Homescreen.dart';
 import 'package:admin/Login/signup.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -10,6 +12,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   double? height, width;
+  TextEditingController userIdController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -70,19 +74,21 @@ class _LoginPageState extends State<LoginPage> {
                         'LOGIN',
                         style: TextStyle(letterSpacing: 2, fontSize: 20),
                       )),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       TextFormField(
+                        controller: userIdController,
                         decoration: const InputDecoration(
                           labelText: 'Username',
                           hintText: 'Enter you username',
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 30,
                       ),
                       TextFormField(
+                        controller: passwordController,
                         obscureText: true,
                         decoration: const InputDecoration(
                           labelText: 'Password',
@@ -107,11 +113,16 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 height: 50,
                 width: 200,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    'Login',
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                child: InkWell(
+                  onTap: () {
+                    login(userIdController.text, passwordController.text);
+                  },
+                  child: const Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Log in',
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
                   ),
                 ),
               ),
@@ -130,10 +141,10 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       TextButton(
                           onPressed: () {},
-                          child: Text(
+                          child: const Text(
                             'FORGOT PASSWORD?',
                           )),
-                      SizedBox(
+                      const SizedBox(
                         width: 110,
                       ),
                       TextButton(
@@ -141,9 +152,9 @@ class _LoginPageState extends State<LoginPage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => SignupPage()));
+                                    builder: (context) => const SignupPage()));
                           },
-                          child: Text(
+                          child: const Text(
                             'SIGN UP',
                           ))
                     ],
@@ -155,5 +166,67 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  Future<void> login(String adminId, String password) async {
+    try {
+      // Fetch the user document from Firestore based on the provided username
+      final userDoc = await FirebaseFirestore.instance
+          .collection('admins')
+          .doc(adminId)
+          .get();
+
+      if (userDoc.exists) {
+        // Compare the provided password with the stored password
+        final storedPassword = userDoc.data()!['password'];
+
+        if (password == storedPassword) {
+          // ignore: use_build_context_synchronously
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              backgroundColor: Colors.green,
+              content: Center(
+                child: Text(
+                  "Login Successful!",
+                ),
+              ),
+            ),
+          );
+          // ignore: use_build_context_synchronously
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Home(
+                  adminId: adminId,
+                ),
+              ),
+              (route) => false);
+
+          // Navigate to the home screen or perform any other necessary actions
+        } else {
+          // Incorrect password
+          SnackBar snackBar = const SnackBar(
+            backgroundColor: Colors.red,
+            content: Center(child: Text('Incorrect password')),
+          );
+          // ignore: use_build_context_synchronously
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          // print('Incorrect password');
+        }
+      } else {
+        // User does not exist
+        SnackBar snackBar = const SnackBar(
+          backgroundColor: Colors.red,
+          content: Center(child: Center(child: Text('User does not exist'))),
+        );
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        // print('User does not exist');
+      }
+    } catch (e) {
+      // Error occurred
+      // ignore: avoid_print
+      print('Error: $e');
+    }
   }
 }

@@ -110,7 +110,7 @@ class _TicketTableReportState extends State<TicketTableReport> {
                   minWidth: 5500,
                   border: TableBorder.all(color: Colors.black),
                   headingRowColor:
-                      const MaterialStatePropertyAll(Colors.deepPurple),
+                      const MaterialStatePropertyAll(Colors.purple),
                   headingTextStyle:
                       const TextStyle(color: Colors.white, fontSize: 50.0),
                   columnSpacing: 3.0,

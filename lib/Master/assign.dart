@@ -26,10 +26,10 @@ class _assignState extends State<assign> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    const Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const CircleAvatar(
+                        CircleAvatar(
                           backgroundColor: Color.fromARGB(255, 224, 141, 239),
                           child: Icon(
                             Icons.star_border_purple500,
@@ -37,10 +37,10 @@ class _assignState extends State<assign> {
                             color: Colors.white,
                           ),
                         ),
-                        const SizedBox(
+                        SizedBox(
                           width: 8,
                         ),
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.all(5.0),
                           child: Text(
                             'Assign Role',
@@ -53,7 +53,7 @@ class _assignState extends State<assign> {
                       height: 30,
                       width: 150,
                     ),
-                    Container(
+                    SizedBox(
                       height: 50,
                       width: double.infinity,
                       child: DropdownButton<String>(
@@ -75,7 +75,7 @@ class _assignState extends State<assign> {
                       height: 30,
                       width: 150,
                     ),
-                    Container(
+                    SizedBox(
                       height: 50,
                       width: double.infinity,
                       child: DropdownButton<String>(
@@ -86,26 +86,26 @@ class _assignState extends State<assign> {
                           });
                         },
                         isExpanded: true,
-                        items: <String>['Role A', 'Role B', 'Role C', 'Role D']
+                        items: ['Role A', 'Role B', 'Role C', 'Role D']
                             .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem(
                               value: value, child: Text(value));
                         }).toList(),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     ElevatedButton(
                         onPressed: () {}, child: Text('Assign Role')),
-                    SizedBox(
+                    const SizedBox(
                       width: 8,
                     ),
                     ElevatedButton(
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: Text('Cancel'))
+                        child: const Text('Cancel'))
                   ],
                 ),
               ),

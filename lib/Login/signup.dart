@@ -1,3 +1,5 @@
+import 'package:admin/Login/login.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class SignupPage extends StatefulWidget {
@@ -9,6 +11,11 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   double? height, width;
+
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController mobileController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +72,6 @@ class _SignupPageState extends State<SignupPage> {
                       Icons.arrow_back,
                       color: Colors.white,
                     ))),
-
             Positioned(
               bottom: 70,
               child: Card(
@@ -74,55 +80,61 @@ class _SignupPageState extends State<SignupPage> {
                   height: MediaQuery.of(context).size.height * 0.53,
                   width: MediaQuery.of(context).size.width * 0.35,
                   padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    children: [
-                      Center(
-                          child: Text(
-                        'SIGN UP',
-                        style: TextStyle(letterSpacing: 2, fontSize: 20),
-                      )),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: 'First Name',
-                          hintText: 'Enter your first name ',
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const Center(
+                            child: Text(
+                          'SIGN UP',
+                          style: TextStyle(letterSpacing: 2, fontSize: 20),
+                        )),
+                        const SizedBox(
+                          height: 20,
                         ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: 'Last name',
-                          hintText: 'Enter your last name',
+                        TextFormField(
+                          controller: firstNameController,
+                          decoration: const InputDecoration(
+                            labelText: 'First Name',
+                            hintText: 'Enter your first name ',
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: 'Mobile number',
-                          hintText: 'Enter you mobile number',
+                        const SizedBox(
+                          height: 20,
                         ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
+                        TextFormField(
+                          controller: lastNameController,
+                          decoration: const InputDecoration(
+                            labelText: 'Last name',
+                            hintText: 'Enter your last name',
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        TextFormField(
+                          controller: mobileController,
+                          decoration: const InputDecoration(
+                            labelText: 'Mobile number',
+                            hintText: 'Enter you mobile number',
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
 
-                      TextFormField(
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                          labelText: 'Password',
-                          hintText: 'Enter you password',
+                        TextFormField(
+                          controller: passwordController,
+                          obscureText: true,
+                          decoration: const InputDecoration(
+                            labelText: 'Password',
+                            hintText: 'Enter you password',
+                          ),
                         ),
-                      ),
-                      // SizedBox(
-                      //   height: 20,
-                      // ),
-                    ],
+                        // SizedBox(
+                        //   height: 20,
+                        // ),
+                      ],
+                    ),
                   ),
                   alignment: Alignment.center,
                 ),
@@ -137,44 +149,71 @@ class _SignupPageState extends State<SignupPage> {
                 ),
                 height: 50,
                 width: 200,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    'SIGN UP',
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                child: InkWell(
+                  onTap: () {
+                    signup(firstNameController.text, lastNameController.text,
+                        mobileController.text, passwordController.text);
+                  },
+                  child: const Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'SIGN UP',
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
                   ),
                 ),
               ),
-              // child: ElevatedButton(
-              //   onPressed: () {},
-              //   child: const Text('Login'),
-              // ),
-            ),
-            // Positioned(
-            //   bottom: 45,
-            //   left: 30,
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-            //     children: [
-            //       TextButton(
-            //           onPressed: () {},
-            //           child: Text(
-            //             'BACK TO LOGIN PAGE',
-            //           )),
-            //       // SizedBox(
-            //       //   width: 110,
-            //       // ),
-            //       // TextButton(
-            //       //     onPressed: () {},
-            //       //     child: Text(
-            //       //       'SIGN UP',
-            //       //     ))
-            //     ],
-            //   ),
-            // )
+            )
           ],
         ),
       ),
     );
+  }
+
+  void signup(
+      String firstName, String lastName, String mobile, String password) {
+    String firstInitial = firstName[0][0].trim().toUpperCase();
+    String lastInitial = lastName[0][0].trim().toUpperCase();
+    String mobileLastFour = mobile.substring(mobile.length - 4);
+    String fullName = '$firstName $lastName';
+
+    String adminId = '$firstInitial$lastInitial$mobileLastFour';
+    FirebaseFirestore.instance.collection('admins').doc(adminId).set(
+      {
+        'adminId': adminId,
+        'firstName': firstName,
+        'lastName': lastName,
+        'fullName': fullName,
+        'mobile': mobile,
+        'password': password
+      },
+    );
+
+    alertbox(adminId, context);
+  }
+
+  alertbox(String adminId, BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ),
+                        ),
+                    child: const Text(
+                      'OK',
+                      style: TextStyle(color: Colors.black),
+                    )),
+              ],
+              title: Text(
+                'Your User ID is: $adminId',
+                style: const TextStyle(color: Colors.black),
+              ));
+        });
   }
 }
