@@ -211,7 +211,9 @@ class Home extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ChangePassword()),
+                                  builder: (context) => ChangePassword(
+                                        adminId: adminId,
+                                      )),
                             );
                           },
                         ),
@@ -225,7 +227,9 @@ class Home extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const ChangePassword()),
+                              builder: (context) => ChangePassword(
+                                    adminId: adminId,
+                                  )),
                         );
                       },
                       child: Container(
@@ -264,7 +268,9 @@ class Home extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const Profile()),
+                                builder: (context) => Profile(
+                                      adminId: adminId,
+                                    )),
                           );
                         },
                         child: Container(
@@ -311,7 +317,9 @@ class Home extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const Profile()),
+                                  builder: (context) => Profile(
+                                        adminId: adminId,
+                                      )),
                             );
                           },
                         ),
@@ -324,13 +332,13 @@ class Home extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Add your notification logic here
-        },
-        child: const Icon(Icons.notifications),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     // Add your notification logic here
+      //   },
+      //   child: const Icon(Icons.notifications),
+      // ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 

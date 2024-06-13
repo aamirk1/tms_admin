@@ -1,6 +1,8 @@
 import 'package:admin/Master/itemMaster/roomList.dart';
+import 'package:admin/providers/floorProvider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class FloorList extends StatefulWidget {
   const FloorList({super.key, required this.buildingNumber});
@@ -38,80 +40,90 @@ class _FloorListState extends State<FloorList> {
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Center(
-              child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.8,
-                  width: MediaQuery.of(context).size.width * 0.6,
-                  child: Card(
-                    elevation: 10,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
+          : Center(child:
+              Consumer<AllFloorProvider>(builder: (context, value, child) {
+              return SizedBox(
+                height: MediaQuery.of(context).size.height * 0.9,
+                width: MediaQuery.of(context).size.width * 0.6,
+                child: Card(
+                  elevation: 10,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SingleChildScrollView(
+                        child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: floorNumberList.length,
-                              itemBuilder: (item, index) {
-                                return Column(
-                                  children: [
-                                    ListTile(
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.7,
+                            child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: value.floorList.length,
+                                itemBuilder: (item, index) {
+                                  return Column(
+                                    children: [
+                                      ListTile(
                                         onTap: () {
-                                          Navigator.push(context,
-                                              MaterialPageRoute(
-                                            builder: (context) {
-                                              return RoomList(
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => RoomList(
+                                                floorNumber:
+                                                    value.floorList[index],
                                                 buildingNumber:
                                                     widget.buildingNumber,
-                                                floorNumber:
-                                                    floorNumberList[index],
-                                              );
-                                            },
-                                          ));
+                                              ),
+                                            ),
+                                          );
                                         },
                                         title: Text(
-                                          floorNumberList[index],
+                                          value.floorList[index],
                                           style: const TextStyle(
                                               color: Colors.black),
                                         ),
                                         trailing: IconButton(
-                                            icon: const Icon(
-                                              Icons.delete,
-                                              color: Colors.red,
-                                            ),
-                                            onPressed: () {
-                                              deletefloorNumber(
-                                                  floorNumberList[index],
-                                                  widget.buildingNumber);
-                                            })),
-                                    const Divider(
-                                      color: Colors.black,
-                                    )
-                                  ],
-                                );
-                              }),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Align(
-                            alignment: Alignment.bottomRight,
-                            child: FloatingActionButton(
-                              backgroundColor: Colors.deepPurple,
-                              onPressed: () {
-                                addfloorNumber();
-                              },
-                              child: const Icon(Icons.add),
-                            ),
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                          ),
+                                          onPressed: () {
+                                            deletefloorNumber(
+                                                value.floorList[index],
+                                                widget.buildingNumber);
+                                          },
+                                        ),
+                                      ),
+                                      const Divider(
+                                        color: Colors.black,
+                                      )
+                                    ],
+                                  );
+                                }),
                           ),
-                        )
-                      ],
-                    ),
-                  )),
-            ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: FloatingActionButton(
+                            backgroundColor: Colors.deepPurple,
+                            onPressed: () {
+                              addfloorNumber();
+                            },
+                            child: const Icon(Icons.add),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            })),
     );
   }
 
   Future storeData(String floorNumber, String buildingNumber) async {
+    final provider = Provider.of<AllFloorProvider>(context, listen: false);
     await FirebaseFirestore.instance
         .collection('buildingNumbers')
         .doc(buildingNumber)
@@ -120,9 +132,12 @@ class _FloorListState extends State<FloorList> {
         .set({
       'floorNumber': floorNumber,
     });
+    provider.addSingleList({'floorNumber': floorNumber});
   }
 
   Future<void> fetchData(String buildingNumber) async {
+    final provider = Provider.of<AllFloorProvider>(context, listen: false);
+    provider.setBuilderList([]);
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('buildingNumbers')
         .doc(buildingNumber)
@@ -132,17 +147,20 @@ class _FloorListState extends State<FloorList> {
       List<String> tempData = querySnapshot.docs.map((e) => e.id).toList();
       floorNumberList = tempData;
       print(floorNumberList);
+      provider.setBuilderList(floorNumberList);
     }
   }
 
   Future<void> deletefloorNumber(
       String floorNumber, String buildingNumber) async {
+    final provider = Provider.of<AllFloorProvider>(context, listen: false);
     await FirebaseFirestore.instance
         .collection('buildingNumbers')
         .doc(buildingNumber)
         .collection('floorNumbers')
         .doc(floorNumber)
         .delete();
+    provider.removeData(floorNumberList.indexOf(floorNumber));
   }
 
   void addfloorNumber() {
@@ -216,6 +234,7 @@ class _FloorListState extends State<FloorList> {
   }
 
   void popupmessage(String msg) {
+    final provider = Provider.of<AllFloorProvider>(context, listen: false);
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -228,9 +247,12 @@ class _FloorListState extends State<FloorList> {
               actions: [
                 TextButton(
                     onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      floorNumberController.clear();
+                      fetchData(widget.buildingNumber).whenComplete(() {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        floorNumberController.clear();
+                        provider.setLoadWidget(false);
+                      });
                     },
                     child: const Text(
                       'OK',

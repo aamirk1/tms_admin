@@ -1,5 +1,7 @@
+import 'package:admin/providers/roomProvider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class RoomList extends StatefulWidget {
   const RoomList(
@@ -42,65 +44,92 @@ class _RoomListState extends State<RoomList> {
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Center(
-              child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.8,
-                  width: MediaQuery.of(context).size.width * 0.6,
-                  child: Card(
-                    elevation: 10,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
+          : Center(child:
+              Consumer<AllRoomProvider>(builder: (context, value, child) {
+              return SizedBox(
+                height: MediaQuery.of(context).size.height * 0.9,
+                width: MediaQuery.of(context).size.width * 0.6,
+                child: Card(
+                  elevation: 10,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SingleChildScrollView(
+                        child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: roomNumberList.length,
-                              itemBuilder: (item, index) {
-                                return Column(
-                                  children: [
-                                    ListTile(
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.7,
+                            child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: value.roomList.length,
+                                itemBuilder: (item, index) {
+                                  return Column(
+                                    children: [
+                                      ListTile(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => RoomList(
+                                                floorNumber:
+                                                    value.roomList[index],
+                                                buildingNumber:
+                                                    widget.buildingNumber,
+                                              ),
+                                            ),
+                                          );
+                                        },
                                         title: Text(
-                                          roomNumberList[index],
+                                          value.roomList[index],
                                           style: const TextStyle(
                                               color: Colors.black),
                                         ),
                                         trailing: IconButton(
-                                            icon:const Icon(Icons.delete,color: Colors.red,),
-                                            onPressed: () {
-                                              deleteroomNumber(
-                                                  roomNumberList[index],
-                                                  widget.buildingNumber,
-                                                  widget.floorNumber);
-                                            })),
-                                    const Divider(
-                                      color: Colors.black,
-                                    )
-                                  ],
-                                );
-                              }),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Align(
-                            alignment: Alignment.bottomRight,
-                            child: FloatingActionButton(
-                              onPressed: () {
-                                addroomNumber();
-                              },
-                              child: const Icon(Icons.add),
-                            ),
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                          ),
+                                          onPressed: () {
+                                            deleteroomNumber(
+                                                value.roomList[index],
+                                                widget.buildingNumber,
+                                                widget.floorNumber);
+                                          },
+                                        ),
+                                      ),
+                                      const Divider(
+                                        color: Colors.black,
+                                      )
+                                    ],
+                                  );
+                                }),
                           ),
-                        )
-                      ],
-                    ),
-                  )),
-            ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: FloatingActionButton(
+                            backgroundColor: Colors.deepPurple,
+                            onPressed: () {
+                              addroomNumber();
+                            },
+                            child: const Icon(Icons.add),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            })),
     );
   }
 
   Future storeData(
       String roomNumber, String buildingNumber, String floorNumber) async {
+    final provider = Provider.of<AllRoomProvider>(context, listen: false);
     await FirebaseFirestore.instance
         .collection('buildingNumbers')
         .doc(buildingNumber)
@@ -111,9 +140,11 @@ class _RoomListState extends State<RoomList> {
         .set({
       'roomNumber': roomNumber,
     });
+    provider.addSingleList({'roomNumber': roomNumber});
   }
 
   Future<void> fetchData(String buildingNumber, String floorNumber) async {
+    final provider = Provider.of<AllRoomProvider>(context, listen: false);
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('buildingNumbers')
         .doc(buildingNumber)
@@ -125,11 +156,13 @@ class _RoomListState extends State<RoomList> {
       List<String> tempData = querySnapshot.docs.map((e) => e.id).toList();
       roomNumberList = tempData;
       print(roomNumberList);
+      provider.setBuilderList(roomNumberList);
     }
   }
 
   Future<void> deleteroomNumber(
       String roomNumber, String buildingNumber, String floorNumber) async {
+    final provider = Provider.of<AllRoomProvider>(context, listen: false);
     await FirebaseFirestore.instance
         .collection('buildingNumbers')
         .doc(buildingNumber)
@@ -138,6 +171,7 @@ class _RoomListState extends State<RoomList> {
         .collection('roomNumbers')
         .doc(roomNumber)
         .delete();
+    provider.removeData(roomNumberList.indexOf(roomNumber));
   }
 
   void addroomNumber() {
@@ -213,6 +247,7 @@ class _RoomListState extends State<RoomList> {
   }
 
   void popupmessage(String msg) {
+    final provider = Provider.of<AllRoomProvider>(context, listen: false);
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -225,9 +260,13 @@ class _RoomListState extends State<RoomList> {
               actions: [
                 TextButton(
                     onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      roomNumberController.clear();
+                      fetchData(widget.buildingNumber, widget.floorNumber)
+                          .whenComplete(() {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        roomNumberController.clear();
+                        provider.setLoadWidget(false);
+                      });
                     },
                     child: const Text(
                       'OK',

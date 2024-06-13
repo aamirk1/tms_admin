@@ -1,6 +1,9 @@
-import 'package:admin/Login/login.dart';
-import 'package:admin/Provider/filteration_provider.dart';
-import 'package:admin/Provider/menuUserPageProvider.dart';
+import 'package:admin/Homescreen.dart';
+import 'package:admin/providers/assetsProvider.dart';
+import 'package:admin/providers/buildingProvider.dart';
+import 'package:admin/providers/designationProvider.dart';
+import 'package:admin/providers/floorProvider.dart';
+import 'package:admin/providers/roomProvider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -30,14 +33,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => FilterProviderAdmin()),
-        ChangeNotifierProvider(create: (context) => MenuUserPageProvider()),
-        // ChangeNotifierProvider(create: (context) => SelectedRowIndexModel()),
-        // ChangeNotifierProvider(create: (context) => EnergyProvider()),
-        // ChangeNotifierProvider(create: (context) => AllDepoSelectProvider()),
-        // ChangeNotifierProvider(create: (context) => DemandEnergyProvider()),
-        // ChangeNotifierProvider(create: (context) => HoverProvider()),
-        // ChangeNotifierProvider(create: (context) => CheckboxProvider()),
+        ChangeNotifierProvider(create: (context) => AllBuildingProvider()),
+        ChangeNotifierProvider(create: (context) => AllAssetProvider()),
+        ChangeNotifierProvider(create: (context) => AllDesignationProvider()),
+        ChangeNotifierProvider(create: (context) => AllFloorProvider()),
+        ChangeNotifierProvider(create: (context) => AllRoomProvider()),
+        ChangeNotifierProvider(create: (context) => AllRoomProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -50,8 +51,8 @@ class MyApp extends StatelessWidget {
           ),
           primarySwatch: Colors.blue,
         ),
-        home: const LoginPage(),
-        //Home(),
+        home: const Home(adminId: 'ST8032'),
+        // LoginPage(),
         //LoginPage(),
       ),
     );

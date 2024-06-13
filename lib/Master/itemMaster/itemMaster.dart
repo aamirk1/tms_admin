@@ -1,6 +1,8 @@
 import 'package:admin/Master/itemMaster/floorList.dart';
+import 'package:admin/providers/buildingProvider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ItemMaster extends StatefulWidget {
   const ItemMaster({super.key});
@@ -37,93 +39,106 @@ class _ItemMasterState extends State<ItemMaster> {
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Center(
-              child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.8,
-                  width: MediaQuery.of(context).size.width * 0.6,
-                  child: Card(
-                    elevation: 10,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: buildingNumberList.length,
-                              itemBuilder: (item, index) {
-                                return Column(
-                                  children: [
-                                    ListTile(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => FloorList(
-                                              buildingNumber:
-                                                  buildingNumberList[index],
+          : Center(child:
+              Consumer<AllBuildingProvider>(builder: (context, value, child) {
+              return  SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.9,
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: Card(
+                        elevation: 10,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SingleChildScrollView(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.7,
+                                  child: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: value.buildingList.length,
+                                      itemBuilder: (item, index) {
+                                        return Column(
+                                          children: [
+                                            ListTile(
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        FloorList(
+                                                      buildingNumber: value
+                                                          .buildingList[index],
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              title: Text(
+                                                value.buildingList[index],
+                                                style: const TextStyle(
+                                                    color: Colors.black),
+                                              ),
+                                              trailing: IconButton(
+                                                icon: const Icon(
+                                                  Icons.delete,
+                                                  color: Colors.red,
+                                                ),
+                                                onPressed: () {
+                                                  deletebuildingNumber(value
+                                                      .buildingList[index]);
+                                                },
+                                              ),
                                             ),
-                                          ),
+                                            const Divider(
+                                              color: Colors.black,
+                                            )
+                                          ],
                                         );
-                                      },
-                                      title: Text(
-                                        buildingNumberList[index],
-                                        style: const TextStyle(
-                                            color: Colors.black),
-                                      ),
-                                      trailing: IconButton(
-                                        icon: const Icon(
-                                          Icons.delete,
-                                          color: Colors.red,
-                                        ),
-                                        onPressed: () {
-                                          deletebuildingNumber(
-                                              buildingNumberList[index]);
-                                        },
-                                      ),
-                                    ),
-                                    const Divider(
-                                      color: Colors.black,
-                                    )
-                                  ],
-                                );
-                              }),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Align(
-                            alignment: Alignment.bottomRight,
-                            child: FloatingActionButton(
-                              backgroundColor: Colors.deepPurple,
-                              onPressed: () {
-                                addbuildingNumber();
-                              },
-                              child: const Icon(Icons.add),
+                                      }),
+                                ),
+                              ),
                             ),
-                          ),
-                        )
-                      ],
-                    ),
-                  )),
-            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Align(
+                                alignment: Alignment.bottomRight,
+                                child: FloatingActionButton(
+                                  backgroundColor: Colors.deepPurple,
+                                  onPressed: () {
+                                    addbuildingNumber();
+                                  },
+                                  child: const Icon(Icons.add),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+            })),
     );
   }
 
   Future<void> fetchData() async {
+    final provider = Provider.of<AllBuildingProvider>(context, listen: false);
+    provider.setBuilderList([]);
     QuerySnapshot querySnapshot =
         await FirebaseFirestore.instance.collection('buildingNumbers').get();
     if (querySnapshot.docs.isNotEmpty) {
       List<String> tempData = querySnapshot.docs.map((e) => e.id).toList();
       buildingNumberList = tempData;
-      print(buildingNumberList);
+      provider.setBuilderList(buildingNumberList);
     }
   }
 
   Future<void> deletebuildingNumber(String buildingNumber) async {
+    final provider = Provider.of<AllBuildingProvider>(context, listen: false);
     await FirebaseFirestore.instance
         .collection('buildingNumbers')
         .doc(buildingNumber)
         .delete();
+    provider.removeData(buildingNumberList.indexOf(buildingNumber));
   }
 
   void addbuildingNumber() {
@@ -175,14 +190,15 @@ class _ItemMasterState extends State<ItemMaster> {
                                 },
                                 child: const Text('Cancel')),
                             ElevatedButton(
-                                onPressed: () {
-                                  storeData(buildingNumberController.text)
-                                      .whenComplete(() {
-                                    popupmessage(
-                                        'Building No. added successfully!!');
-                                  });
-                                },
-                                child: const Text('Save'))
+                              onPressed: () {
+                                storeData(buildingNumberController.text)
+                                    .whenComplete(() {
+                                  popupmessage(
+                                      'Building No. added successfully!!');
+                                });
+                              },
+                              child: const Text('Save'),
+                            )
                           ],
                         )
                       ],
@@ -196,15 +212,23 @@ class _ItemMasterState extends State<ItemMaster> {
   }
 
   Future storeData(String buildingNumber) async {
-    await FirebaseFirestore.instance
-        .collection('buildingNumbers')
-        .doc(buildingNumber)
-        .set({
-      'buildingNumber': buildingNumber,
-    });
+    final provider = Provider.of<AllBuildingProvider>(context, listen: false);
+    try {
+      await FirebaseFirestore.instance
+          .collection('buildingNumbers')
+          .doc(buildingNumber)
+          .set({
+        'buildingNumber': buildingNumber,
+      });
+      provider.addSingleList({'buildingNumber': buildingNumber});
+      // ignore: nullable_type_in_catch_clause
+    } catch (e) {
+      print('Error storing data: $e');
+    }
   }
 
   void popupmessage(String msg) {
+    final provider = Provider.of<AllBuildingProvider>(context, listen: false);
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -217,9 +241,12 @@ class _ItemMasterState extends State<ItemMaster> {
               actions: [
                 TextButton(
                     onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      buildingNumberController.clear();
+                      fetchData().whenComplete(() {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        buildingNumberController.clear();
+                        provider.setLoadWidget(false);
+                      });
                     },
                     child: const Text(
                       'OK',
