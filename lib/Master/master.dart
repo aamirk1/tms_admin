@@ -2,7 +2,7 @@ import 'package:admin/Homescreen.dart';
 import 'package:admin/Master/assets/listOfAsset.dart';
 import 'package:admin/Master/designation/listOfDesignation.dart';
 import 'package:admin/Master/itemMaster/itemMaster.dart';
-import 'package:admin/Master/work/listOfDesignation.dart';
+import 'package:admin/Master/work/listOfWork.dart';
 import 'package:flutter/material.dart';
 
 class MasterHomeScreen extends StatefulWidget {

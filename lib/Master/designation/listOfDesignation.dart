@@ -1,5 +1,7 @@
+import 'package:admin/providers/designationProvider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ListOfDesignation extends StatefulWidget {
   const ListOfDesignation({super.key});
@@ -32,65 +34,92 @@ class _ListOfDesignationState extends State<ListOfDesignation> {
         ),
       ),
       body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Center(
-              child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.8,
-                  width: MediaQuery.of(context).size.width * 0.6,
-                  child: Card(
-                    elevation: 10,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
+          ? const Center(child: CircularProgressIndicator())
+          : Center(child: Consumer<AllDesignationProvider>(
+              builder: (context, value, child) {
+              return SizedBox(
+                height: MediaQuery.of(context).size.height * 0.9,
+                width: MediaQuery.of(context).size.width * 0.6,
+                child: Card(
+                  elevation: 10,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SingleChildScrollView(
+                        child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: designationList.length,
-                              itemBuilder: (item, index) {
-                                return Column(
-                                  children: [
-                                    ListTile(
-                                        title: Text(designationList[index]),
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.7,
+                            child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: value.designationList.length,
+                                itemBuilder: (item, index) {
+                                  return Column(
+                                    children: [
+                                      ListTile(
+                                        // onTap: () {
+                                        //   Navigator.push(
+                                        //     context,
+                                        //     MaterialPageRoute(
+                                        //       builder: (context) => RoomList(
+                                        //         floorNumber:
+                                        //             value.roomList[index],
+                                        //         buildingNumber:
+                                        //             widget.buildingNumber,
+                                        //       ),
+                                        //     ),
+                                        //   );
+                                        // },
+                                        title: Text(
+                                          value.designationList[index],
+                                          style: const TextStyle(
+                                              color: Colors.black),
+                                        ),
                                         trailing: IconButton(
-                                            icon: const Icon(
-                                              Icons.delete,
-                                              color: Colors.red,
-                                            ),
-                                            onPressed: () {
-                                              deleteDesignation(
-                                                  designationList[index]);
-                                            })),
-                                    const Divider(
-                                      color: Colors.black,
-                                    )
-                                  ],
-                                );
-                              }),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Align(
-                            alignment: Alignment.bottomRight,
-                            child: FloatingActionButton(
-                              backgroundColor:Colors.deepPurple,
-                              onPressed: () {
-                                addDesignation();
-                              },
-                              child: const Icon(Icons.add),
-                            ),
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                          ),
+                                          onPressed: () {
+                                            deleteDesignation(
+                                              value.designationList[index],
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      const Divider(
+                                        color: Colors.black,
+                                      )
+                                    ],
+                                  );
+                                }),
                           ),
-                        )
-                      ],
-                    ),
-                  )),
-            ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: FloatingActionButton(
+                            backgroundColor: Colors.deepPurple,
+                            onPressed: () {
+                              addDesignation();
+                            },
+                            child: const Icon(Icons.add),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            })),
     );
   }
 
   Future<void> fetchData() async {
+    final provider =
+        Provider.of<AllDesignationProvider>(context, listen: false);
     QuerySnapshot querySnapshot =
         await FirebaseFirestore.instance.collection('designations').get();
     if (querySnapshot.docs.isNotEmpty) {
@@ -98,13 +127,19 @@ class _ListOfDesignationState extends State<ListOfDesignation> {
       designationList = tempData;
       print(designationList);
     }
+
+    provider.setBuilderList(designationList);
   }
 
   Future<void> deleteDesignation(String designation) async {
+    final provider =
+        Provider.of<AllDesignationProvider>(context, listen: false);
     await FirebaseFirestore.instance
         .collection('designations')
         .doc(designation)
         .delete();
+
+    provider.removeData(provider.designationList.indexOf(designation));
   }
 
   void addDesignation() {
@@ -206,15 +241,22 @@ class _ListOfDesignationState extends State<ListOfDesignation> {
   }
 
   Future storeData(String designation) async {
+    final provider =
+        Provider.of<AllDesignationProvider>(context, listen: false);
     await FirebaseFirestore.instance
         .collection('designations')
         .doc(designation)
         .set({
       'designation': designation,
     });
+    provider.addSingleList({
+      'designation': designation,
+    });
   }
 
   void popupmessage(String msg) {
+    final provider =
+        Provider.of<AllDesignationProvider>(context, listen: false);
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -227,9 +269,12 @@ class _ListOfDesignationState extends State<ListOfDesignation> {
               actions: [
                 TextButton(
                     onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      designationController.clear();
+                      fetchData().whenComplete(() {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        designationController.clear();
+                        provider.setLoadWidget(false);
+                      });
                     },
                     child: const Text(
                       'OK',

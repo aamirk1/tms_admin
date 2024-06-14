@@ -1,5 +1,7 @@
+import 'package:admin/providers/workProvider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ListOfWork extends StatefulWidget {
   const ListOfWork({super.key});
@@ -32,64 +34,91 @@ class _ListOfWorkState extends State<ListOfWork> {
         ),
       ),
       body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Center(
-              child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.8,
-                  width: MediaQuery.of(context).size.width * 0.6,
-                  child: Card(
-                    elevation: 10,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
+          ? const Center(child: CircularProgressIndicator())
+          : Center(child:
+              Consumer<AllWorkProvider>(builder: (context, value, child) {
+              return SizedBox(
+                height: MediaQuery.of(context).size.height * 0.9,
+                width: MediaQuery.of(context).size.width * 0.6,
+                child: Card(
+                  elevation: 10,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SingleChildScrollView(
+                        child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: workList.length,
-                              itemBuilder: (item, index) {
-                                return Column(
-                                  children: [
-                                    ListTile(
-                                        title: Text(workList[index]),
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.7,
+                            child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: value.workList.length,
+                                itemBuilder: (item, index) {
+                                  return Column(
+                                    children: [
+                                      ListTile(
+                                        // onTap: () {
+                                        //   Navigator.push(
+                                        //     context,
+                                        //     MaterialPageRoute(
+                                        //       builder: (context) => RoomList(
+                                        //         floorNumber:
+                                        //             value.roomList[index],
+                                        //         buildingNumber:
+                                        //             widget.buildingNumber,
+                                        //       ),
+                                        //     ),
+                                        //   );
+                                        // },
+                                        title: Text(
+                                          value.workList[index],
+                                          style: const TextStyle(
+                                              color: Colors.black),
+                                        ),
                                         trailing: IconButton(
-                                            icon: const Icon(
-                                              Icons.delete,
-                                              color: Colors.red,
-                                            ),
-                                            onPressed: () {
-                                              deleteWork(workList[index]);
-                                            })),
-                                    const Divider(
-                                      color: Colors.black,
-                                    )
-                                  ],
-                                );
-                              }),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Align(
-                            alignment: Alignment.bottomRight,
-                            child: FloatingActionButton(
-                              backgroundColor: Colors.deepPurple,
-                              onPressed: () {
-                                addWork();
-                              },
-                              child: const Icon(Icons.add),
-                            ),
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                          ),
+                                          onPressed: () {
+                                            deleteWork(
+                                              value.workList[index],
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      const Divider(
+                                        color: Colors.black,
+                                      )
+                                    ],
+                                  );
+                                }),
                           ),
-                        )
-                      ],
-                    ),
-                  )),
-            ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: FloatingActionButton(
+                            backgroundColor: Colors.deepPurple,
+                            onPressed: () {
+                              addWork();
+                            },
+                            child: const Icon(Icons.add),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            })),
     );
   }
 
   Future<void> fetchData() async {
+    final provider = Provider.of<AllWorkProvider>(context, listen: false);
     QuerySnapshot querySnapshot =
         await FirebaseFirestore.instance.collection('works').get();
     if (querySnapshot.docs.isNotEmpty) {
@@ -97,10 +126,14 @@ class _ListOfWorkState extends State<ListOfWork> {
       workList = tempData;
       print(workList);
     }
+
+    provider.setBuilderList(workList);
   }
 
   Future<void> deleteWork(String work) async {
+    final provider = Provider.of<AllWorkProvider>(context, listen: false);
     await FirebaseFirestore.instance.collection('works').doc(work).delete();
+    provider.removeData(workList.indexOf(work));
   }
 
   void addWork() {
@@ -201,12 +234,17 @@ class _ListOfWorkState extends State<ListOfWork> {
   }
 
   Future storeData(String work) async {
+    final provider = Provider.of<AllWorkProvider>(context, listen: false);
     await FirebaseFirestore.instance.collection('works').doc(work).set({
+      'work': work,
+    });
+    provider.addSingleList({
       'work': work,
     });
   }
 
   void popupmessage(String msg) {
+    final provider = Provider.of<AllWorkProvider>(context, listen: false);
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -219,9 +257,12 @@ class _ListOfWorkState extends State<ListOfWork> {
               actions: [
                 TextButton(
                     onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      workController.clear();
+                      fetchData().whenComplete(() {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        workController.clear();
+                        provider.setLoadWidget(false);
+                      });
                     },
                     child: const Text(
                       'OK',

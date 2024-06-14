@@ -1,5 +1,7 @@
+import 'package:admin/providers/assetsProvider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ListOfAsset extends StatefulWidget {
   const ListOfAsset({super.key});
@@ -32,65 +34,91 @@ class _ListOfAssetState extends State<ListOfAsset> {
         ),
       ),
       body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Center(
-              child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.8,
-                  width: MediaQuery.of(context).size.width * 0.6,
-                  child: Card(
-                    elevation: 10,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
+          ? const Center(child: CircularProgressIndicator())
+          : Center(child:
+              Consumer<AllAssetProvider>(builder: (context, value, child) {
+              return SizedBox(
+                height: MediaQuery.of(context).size.height * 0.9,
+                width: MediaQuery.of(context).size.width * 0.6,
+                child: Card(
+                  elevation: 10,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SingleChildScrollView(
+                        child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: assetList.length,
-                              itemBuilder: (item, index) {
-                                return Column(
-                                  children: [
-                                    ListTile(
-                                        title: Text(assetList[index]),
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.7,
+                            child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: value.assetList.length,
+                                itemBuilder: (item, index) {
+                                  return Column(
+                                    children: [
+                                      ListTile(
+                                        // onTap: () {
+                                        //   Navigator.push(
+                                        //     context,
+                                        //     MaterialPageRoute(
+                                        //       builder: (context) => RoomList(
+                                        //         floorNumber:
+                                        //             value.roomList[index],
+                                        //         buildingNumber:
+                                        //             widget.buildingNumber,
+                                        //       ),
+                                        //     ),
+                                        //   );
+                                        // },
+                                        title: Text(
+                                          value.assetList[index],
+                                          style: const TextStyle(
+                                              color: Colors.black),
+                                        ),
                                         trailing: IconButton(
-                                            icon: const Icon(
-                                              Icons.delete,
-                                              color: Colors.red,
-                                            ),
-                                            onPressed: () {
-                                              deleteAsset(
-                                                  assetList[index]);
-                                            })),
-                                    const Divider(
-                                      color: Colors.black,
-                                    )
-                                  ],
-                                );
-                              }),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Align(
-                            alignment: Alignment.bottomRight,
-                            child: FloatingActionButton(
-                              backgroundColor:Colors.deepPurple,
-                              onPressed: () {
-                                addAsset();
-                              },
-                              child: const Icon(Icons.add),
-                            ),
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                          ),
+                                          onPressed: () {
+                                            deleteAsset(
+                                              value.assetList[index],
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      const Divider(
+                                        color: Colors.black,
+                                      )
+                                    ],
+                                  );
+                                }),
                           ),
-                        )
-                      ],
-                    ),
-                  )),
-            ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: FloatingActionButton(
+                            backgroundColor: Colors.deepPurple,
+                            onPressed: () {
+                              addAsset();
+                            },
+                            child: const Icon(Icons.add),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            })),
     );
   }
 
   Future<void> fetchData() async {
+    final provider = Provider.of<AllAssetProvider>(context, listen: false);
     QuerySnapshot querySnapshot =
         await FirebaseFirestore.instance.collection('assets').get();
     if (querySnapshot.docs.isNotEmpty) {
@@ -98,13 +126,14 @@ class _ListOfAssetState extends State<ListOfAsset> {
       assetList = tempData;
       print(assetList);
     }
+    provider.setBuilderList(assetList);
   }
 
   Future<void> deleteAsset(String asset) async {
-    await FirebaseFirestore.instance
-        .collection('assets')
-        .doc(asset)
-        .delete();
+    final provider = Provider.of<AllAssetProvider>(context, listen: false);
+    await FirebaseFirestore.instance.collection('assets').doc(asset).delete();
+
+    provider.removeData(assetList.indexOf(asset));
   }
 
   void addAsset() {
@@ -188,8 +217,7 @@ class _ListOfAssetState extends State<ListOfAsset> {
                                 onPressed: () {
                                   storeData(assetController.text)
                                       .whenComplete(() {
-                                    popupmessage(
-                                        'Asset added successfully!!');
+                                    popupmessage('Asset added successfully!!');
                                   });
                                 },
                                 child: const Text('Save'))
@@ -206,15 +234,18 @@ class _ListOfAssetState extends State<ListOfAsset> {
   }
 
   Future storeData(String asset) async {
-    await FirebaseFirestore.instance
-        .collection('assets')
-        .doc(asset)
-        .set({
+    final provider = Provider.of<AllAssetProvider>(context, listen: false);
+    await FirebaseFirestore.instance.collection('assets').doc(asset).set({
+      'asset': asset,
+    });
+
+    provider.addSingleList({
       'asset': asset,
     });
   }
 
   void popupmessage(String msg) {
+    final provider = Provider.of<AllAssetProvider>(context, listen: false);
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -227,9 +258,12 @@ class _ListOfAssetState extends State<ListOfAsset> {
               actions: [
                 TextButton(
                     onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      assetController.clear();
+                      fetchData().whenComplete(() {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        assetController.clear();
+                        provider.setLoadWidget(false);
+                      });
                     },
                     child: const Text(
                       'OK',
