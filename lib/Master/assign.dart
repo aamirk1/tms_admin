@@ -10,7 +10,6 @@ class assign extends StatefulWidget {
 class _assignState extends State<assign> {
   String? selectedRole1;
   String? selectedRole2;
-  TextEditingController _textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(

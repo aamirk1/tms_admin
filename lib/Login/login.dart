@@ -67,9 +67,10 @@ class _LoginPageState extends State<LoginPage> {
                   height: MediaQuery.of(context).size.height * 0.4,
                   width: MediaQuery.of(context).size.width * 0.25,
                   padding: const EdgeInsets.all(20.0),
+                  alignment: Alignment.center,
                   child: Column(
                     children: [
-                      Center(
+                      const Center(
                           child: Text(
                         'LOGIN',
                         style: TextStyle(letterSpacing: 2, fontSize: 20),
@@ -95,12 +96,8 @@ class _LoginPageState extends State<LoginPage> {
                           hintText: 'Enter you password',
                         ),
                       ),
-                      // SizedBox(
-                      //   height: 20,
-                      // ),
                     ],
                   ),
-                  alignment: Alignment.center,
                 ),
               ),
             ),
@@ -126,10 +123,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-              // child: ElevatedButton(
-              //   onPressed: () {},
-              //   child: const Text('Login'),
-              // ),
             ),
             Positioned(
               bottom: 45,

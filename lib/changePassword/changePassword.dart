@@ -127,12 +127,14 @@ class _ChangePasswordState extends State<ChangePassword> {
           backgroundColor: Colors.green,
           content: Center(child: Text('Password Updated Successfully')),
         );
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       } else {
         SnackBar snackBar = const SnackBar(
           backgroundColor: Colors.red,
           content: Center(child: Text('Invalid Old Password')),
         );
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     } else {
@@ -140,6 +142,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         backgroundColor: Colors.red,
         content: Center(child: Text('Invalid Admin Id')),
       );
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }

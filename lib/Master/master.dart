@@ -1,8 +1,8 @@
-import 'package:admin/Homescreen.dart';
 import 'package:admin/Master/assets/listOfAsset.dart';
 import 'package:admin/Master/designation/listOfDesignation.dart';
 import 'package:admin/Master/itemMaster/itemMaster.dart';
 import 'package:admin/Master/work/listOfWork.dart';
+import 'package:admin/assignRoll/user.dart';
 import 'package:flutter/material.dart';
 
 class MasterHomeScreen extends StatefulWidget {
@@ -192,23 +192,21 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                               width: 2,
                               color: const Color.fromARGB(255, 225, 223, 223))),
                       child: IconButton(
-                        icon: const Icon(
-                          Icons.person,
-                          color: Colors.deepPurple,
-                          size: 70,
-                        ),
-                        onPressed: () {
-                          _buildCard(
-                              'Profile', //const Color.fromARGB(255, 149, 197, 235),
-                              () {
+                          icon: const Icon(
+                            Icons.person,
+                            color: Colors.deepPurple,
+                            size: 70,
+                          ),
+                          onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ProfileScreen()),
+                                  builder: (context) => MenuUserPage(
+                                        society: '',
+                                        userId: '',
+                                      )),
                             );
-                          });
-                        },
-                      ),
+                          }),
                     ),
                   ),
                   const SizedBox(

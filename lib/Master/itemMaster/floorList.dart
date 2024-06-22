@@ -182,6 +182,7 @@ class _FloorListState extends State<FloorList> {
                             height: 40,
                             width: MediaQuery.of(context).size.width * 0.25,
                             child: TextFormField(
+                              textInputAction: TextInputAction.done,
                               expands: true,
                               maxLines: null,
                               controller: floorNumberController,

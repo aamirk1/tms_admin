@@ -161,6 +161,7 @@ class _ListOfDesignationState extends State<ListOfDesignation> {
                             height: 40,
                             width: MediaQuery.of(context).size.width * 0.25,
                             child: TextFormField(
+                              textInputAction: TextInputAction.done,
                               expands: true,
                               maxLines: null,
                               controller: designationController,

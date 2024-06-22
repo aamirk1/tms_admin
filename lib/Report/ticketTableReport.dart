@@ -31,26 +31,35 @@ class _TicketTableReportState extends State<TicketTableReport> {
     'Re-Assign (From/To)',
     'Revive',
   ];
+  List<dynamic> rowData = [];
+  String asset = '';
+  String floor = '';
+  String building = '';
+  String room = '';
+  String date = '';
+  String work = '';
+  String serviceProviders = '';
 
-  List<List<String>> rowData = [
-    [
-      '02/03/2024',
-      '90 min',
-      '1234',
-      'Open',
-      'Cleaning',
-      'C',
-      '6',
-      '601',
-      'coridor',
-      'John',
-      'Jack',
-      'Remark',
-      'Picture',
-      'Re-Assign',
-      'Revive'
-    ],
-  ];
+  List<String> ticketList = [];
+  // List<List<String>> rowData = [
+  //   [
+  //     '02/03/2024',
+  //     '90 min',
+  //     '1234',
+  //     'Open',
+  //     'Cleaning',
+  //     'C',
+  //     '6',
+  //     '601',
+  //     'coridor',
+  //     'John',
+  //     'Jack',
+  //     'Remark',
+  //     'Picture',
+  //     'Re-Assign',
+  //     'Revive'
+  //   ],
+  // ];
 
   List<String> serviceProvider = [];
 
@@ -62,6 +71,11 @@ class _TicketTableReportState extends State<TicketTableReport> {
   void initState() {
     getTicketNumberList();
     fetchData();
+    getTicketList().whenComplete(() {
+      getdata().whenComplete(() {
+        setState(() {});
+      });
+    });
     super.initState();
   }
 
@@ -340,6 +354,9 @@ class _TicketTableReportState extends State<TicketTableReport> {
                                 onChanged: (value) {
                                   isServiceProviderSelected = false;
                                   selectedServiceProvider = value;
+                                  setState(() {
+                                    selectedServiceProvider = value;
+                                  });
                                 },
                                 buttonStyleData: const ButtonStyleData(
                                   decoration: BoxDecoration(
@@ -503,5 +520,57 @@ class _TicketTableReportState extends State<TicketTableReport> {
         .update({
       'designation': selectedServiceProvider,
     });
+  }
+
+  Future<void> getTicketList() async {
+    // final provider = Provider.of<AllRoomProvider>(context, listen: false);
+    // provider.setBuilderList([]);
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('raisedTickets').get();
+    if (querySnapshot.docs.isNotEmpty) {
+      List<String> tempData = querySnapshot.docs.map((e) => e.id).toList();
+      ticketList = tempData;
+      print(ticketList);
+    }
+  }
+
+  Future<void> getdata() async {
+    Map<String, dynamic> data = Map();
+
+    for (var i = 0; i < ticketList.length; i++) {
+      List<dynamic> allData = [];
+      print('lll${ticketList[i]}');
+      DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+          .collection('raisedTickets')
+          .doc(ticketList[i])
+          .get();
+
+      if (documentSnapshot.data() != null) {
+        data = documentSnapshot.data() as Map<String, dynamic>;
+
+        asset = data['asset'] ?? '';
+        building = data['building'] ?? '';
+        date = data['date'] ?? '';
+        floor = data['floor'] ?? '';
+        // remark = data['remark'] ?? '';
+        room = data['room'] ?? '';
+        serviceProvider = data['serviceProvider'] ?? '';
+        work = data['work'] ?? '';
+      }
+      allData.add(date);
+      allData.add('TAT');
+      allData.add('Ticket No.');
+      allData.add('OPEN');
+      allData.add(work);
+      allData.add(building);
+      allData.add(floor);
+      allData.add(room);
+      allData.add(asset);
+      allData.add('user');
+      allData.add(serviceProvider);
+      rowData.add(allData);
+      print('all$allData');
+      print('rowData $rowData');
+    }
   }
 }

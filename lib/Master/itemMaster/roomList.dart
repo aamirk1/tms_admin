@@ -66,19 +66,19 @@ class _RoomListState extends State<RoomList> {
                                   return Column(
                                     children: [
                                       ListTile(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => RoomList(
-                                                floorNumber:
-                                                    value.roomList[index],
-                                                buildingNumber:
-                                                    widget.buildingNumber,
-                                              ),
-                                            ),
-                                          );
-                                        },
+                                        // onTap: () {
+                                        //   Navigator.push(
+                                        //     context,
+                                        //     MaterialPageRoute(
+                                        //       builder: (context) => RoomList(
+                                        //         floorNumber:
+                                        //             value.roomList[index],
+                                        //         buildingNumber:
+                                        //             widget.buildingNumber,
+                                        //       ),
+                                        //     ),
+                                        //   );
+                                        // },
                                         title: Text(
                                           value.roomList[index],
                                           style: const TextStyle(
@@ -145,6 +145,7 @@ class _RoomListState extends State<RoomList> {
 
   Future<void> fetchData(String buildingNumber, String floorNumber) async {
     final provider = Provider.of<AllRoomProvider>(context, listen: false);
+    provider.setBuilderList([]);
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('buildingNumbers')
         .doc(buildingNumber)
@@ -193,6 +194,7 @@ class _RoomListState extends State<RoomList> {
                             height: 40,
                             width: MediaQuery.of(context).size.width * 0.25,
                             child: TextFormField(
+                              textInputAction: TextInputAction.done,
                               expands: true,
                               maxLines: null,
                               controller: roomNumberController,
