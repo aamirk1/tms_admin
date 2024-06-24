@@ -5,12 +5,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 // ignore: must_be_immutable
 class RoleScreen extends StatefulWidget {
   // String society;
-  RoleScreen({super.key, required this.society, required this.userId});
-  final String society;
-  String userId;
+  RoleScreen({super.key});
+
   @override
   State<RoleScreen> createState() => _RoleScreenState();
 }
@@ -83,7 +83,7 @@ class _RoleScreenState extends State<RoleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String selectedSocietyName = widget.society;
+    // String selectedSocietyName = widget.society;
     final provider = Provider.of<MenuUserPageProvider>(context, listen: true);
 
     return Scaffold(
@@ -162,8 +162,8 @@ class _RoleScreenState extends State<RoleScreen> {
                                         ),
                                         assignedUsers,
                                         AssignedUser(
-                                          society: widget.society,
-                                        ),
+                                            // society: widget.society,
+                                            ),
                                       );
                                     },
                                   );
@@ -292,14 +292,12 @@ class _RoleScreenState extends State<RoleScreen> {
                                   }
                                 }
 
-                                if (selectedUserName != selectedSocietyName) {
+                                if (selectedUserName !=
+                                    selectedDesignationList) {
                                   role.isEmpty
                                       ? customAlertBox(
                                           'Please Select Designation')
-                                      : selectedSocietyName.isEmpty
-                                          ? customAlertBox(
-                                              'Please Select Society')
-                                          : storeAssignData();
+                                      : storeAssignData();
                                   getTotalUsers().whenComplete(() async {
                                     DocumentReference documentReference =
                                         FirebaseFirestore.instance
@@ -310,8 +308,7 @@ class _RoleScreenState extends State<RoleScreen> {
 
                                     provider.setLoadWidget(true);
                                   });
-                                } else if (selectedUserName.isEmpty &&
-                                    selectedSocietyName.isEmpty) {
+                                } else if (selectedUserName.isEmpty) {
                                   customAlertBox(
                                       'Please Select Member and User');
                                 } else {
@@ -850,7 +847,7 @@ class _RoleScreenState extends State<RoleScreen> {
       'position': 'Assigned',
       'roles': role,
       // 'depots': selectedDepo,
-      'societyname': widget.society,
+      // 'societyname': widget.society,
       // 'cities': selectedCity,
     }).whenComplete(() {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -868,7 +865,7 @@ class _RoleScreenState extends State<RoleScreen> {
       'position': 'Assigned',
       'roles': role,
       // 'depots': selectedDepo,
-      'societyname': widget.society,
+      // 'societyname': widget.society,
       // 'cities': selectedCity,
     });
   }
@@ -877,7 +874,7 @@ class _RoleScreenState extends State<RoleScreen> {
     String phoneNum = '';
     DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
         .collection("members")
-        .doc(widget.society)
+        .doc('widget.society')
         .get();
 
     if (documentSnapshot.exists) {
@@ -926,7 +923,7 @@ class _RoleScreenState extends State<RoleScreen> {
     assignedUserList.clear();
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('AssignedRole')
-        .where('societyname', isEqualTo: widget.society)
+        .where('societyname', isEqualTo: 'widget.society')
         .get();
 
     assignedUserList = querySnapshot.docs.map((e) => e.id).toList();
@@ -938,7 +935,7 @@ class _RoleScreenState extends State<RoleScreen> {
 
   Future<void> getMemberList() async {
     QuerySnapshot documentSnapshot =
-        await FirebaseFirestore.instance.collection('unAssignedRole').get();
+        await FirebaseFirestore.instance.collection('ServiceProviders').get();
     memberList = documentSnapshot.docs.map((e) => e.id).toList();
   }
 }

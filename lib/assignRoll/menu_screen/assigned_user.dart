@@ -13,8 +13,9 @@ import 'package:provider/provider.dart';
 import 'LoadingForMenuUser.dart';
 
 class AssignedUser extends StatefulWidget {
-  const AssignedUser({super.key, required this.society});
-  final String society;
+  const AssignedUser({
+    super.key,
+  });
 
   @override
   State<AssignedUser> createState() => _AssignedUserState();
@@ -144,12 +145,12 @@ class _AssignedUserState extends State<AssignedUser> {
                     stream: showAll
                         ? FirebaseFirestore.instance
                             .collection('AssignedRole')
-                            .where('societyname', isEqualTo: widget.society)
+                            .where('societyname', isEqualTo:' widget.society')
                             .snapshots()
                         : FirebaseFirestore.instance
                             .collection('AssignedRole')
                             .where('alphabet', isEqualTo: selectedAlphabet)
-                            .where('societyname', isEqualTo: widget.society)
+                            .where('societyname', isEqualTo: 'widget.society')
                             .snapshots(),
                     builder: ((context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -233,12 +234,12 @@ class _AssignedUserState extends State<AssignedUser> {
     QuerySnapshot snapshot = showAll
         ? await FirebaseFirestore.instance
             .collection('AssignedRole')
-            .where('societyname', isEqualTo: widget.society)
+            .where('societyname', isEqualTo: 'widget.society')
             .get()
         : await FirebaseFirestore.instance
             .collection('AssignedRole')
             .where('alphabet', isEqualTo: selectedAlphabet)
-            .where('societyname', isEqualTo: widget.society)
+            .where('societyname', isEqualTo:' widget.society')
             .get();
 
     List<dynamic> mapData = snapshot.docs.map((e) => e.id).toList();
@@ -754,7 +755,7 @@ class _AssignedUserState extends State<AssignedUser> {
                                         ],
                                       ),
                                     ),
-                                    Container( 
+                                    Container(
                                         padding: const EdgeInsets.all(5.0),
                                         child: customRowBuilderForDialog(
                                             [phoneNumber])),
@@ -893,7 +894,7 @@ class _AssignedUserState extends State<AssignedUser> {
     try {
       Reference reference = FirebaseStorage.instance
           .ref()
-          .child('assignedImage/${widget.society}//$filename');
+          .child('assignedImage/.society}//filename');
       reference.putData(imagefie);
       print("File uploaded successfully");
     } catch (e) {

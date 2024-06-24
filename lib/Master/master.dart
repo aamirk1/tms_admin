@@ -2,7 +2,7 @@ import 'package:admin/Master/assets/listOfAsset.dart';
 import 'package:admin/Master/designation/listOfDesignation.dart';
 import 'package:admin/Master/itemMaster/itemMaster.dart';
 import 'package:admin/Master/work/listOfWork.dart';
-import 'package:admin/assignRoll/user.dart';
+import 'package:admin/assignRoll/role.dart';
 import 'package:flutter/material.dart';
 
 class MasterHomeScreen extends StatefulWidget {
@@ -201,10 +201,7 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => MenuUserPage(
-                                        society: '',
-                                        userId: '',
-                                      )),
+                                  builder: (context) => RoleScreen()),
                             );
                           }),
                     ),
@@ -212,18 +209,26 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                   const SizedBox(
                     width: 30,
                   ),
-                  Container(
-                    alignment: Alignment.center,
-                    height: 70,
-                    width: 450,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        // color: Color.fromARGB(255, 179, 138, 248)
-                        gradient: const LinearGradient(
-                            colors: [Colors.purple, Colors.deepPurple])),
-                    child: const Text(
-                      'Role Assign',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => RoleScreen()),
+                      );
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      height: 70,
+                      width: 450,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          // color: Color.fromARGB(255, 179, 138, 248)
+                          gradient: const LinearGradient(
+                              colors: [Colors.purple, Colors.deepPurple])),
+                      child: const Text(
+                        'Role Assign',
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
                     ),
                   ),
                 ],

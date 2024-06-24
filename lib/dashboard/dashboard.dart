@@ -2,6 +2,7 @@ import 'package:admin/Homescreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key, required this.adminId});
@@ -26,6 +27,7 @@ class _DashboardState extends State<Dashboard> {
   List<String> columnName = [
     'Report Generated\n On Date',
     'Pending For\n (Days)',
+    'For Less\nThan 01 Day',
     'Between\n 01 to 07',
     'Between\n 08 to 14',
     'Between\n 15 to 21',
@@ -41,6 +43,8 @@ class _DashboardState extends State<Dashboard> {
   String work = '';
   String serviceProvider = '';
   // String remark = '';
+  String currentDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+  String day = '';
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +91,7 @@ class _DashboardState extends State<Dashboard> {
                         columnSpacing: 3.0,
                         columns: List.generate(columnName.length, (index) {
                           return DataColumn2(
-                            fixedWidth: 170,
+                            fixedWidth: 150,
                             // fixedWidth: index == 10 ? 300 : 110,
                             label: Align(
                               alignment: Alignment.center,
@@ -163,7 +167,6 @@ class _DashboardState extends State<Dashboard> {
     if (querySnapshot.docs.isNotEmpty) {
       List<String> tempData = querySnapshot.docs.map((e) => e.id).toList();
       ticketList = tempData;
-      print(ticketList);
     }
   }
 
@@ -185,22 +188,69 @@ class _DashboardState extends State<Dashboard> {
         building = data['building'] ?? '';
         date = data['date'] ?? '';
         floor = data['floor'] ?? '';
-        // remark = data['remark'] ?? '';
         room = data['room'] ?? '';
         serviceProvider = data['serviceProvider'] ?? '';
         work = data['work'] ?? '';
+        day = data['date'].toString().substring(0, 2);
       }
-      allData.add(asset);
-      allData.add(building);
+      // print('day $day');
       allData.add(date);
+      allData.add(day);
+      // Index = 2
+      if (currentDate == date) {
+        allData.add(ticketList.length);
+      } else {
+        allData.add('0');
+      }
+
+      // Index = 3
+      // if (day=>7) {
+      allData.add(ticketList.length);
+      // } else {
+      //   allData.add('0');
+      // }
+
       // allData.add(remark);
       allData.add(floor);
       allData.add(room);
       allData.add(serviceProvider);
       allData.add(work);
       rowData.add(allData);
-      print('all$allData');
-      print('rowData $rowData');
     }
   }
 }
+
+  // Future<void> getdata() async {
+  //   Map<String, dynamic> data = Map();
+
+  //   for (var i = 0; i < ticketList.length; i++) {
+  //     List<dynamic> allData = [];
+  //     print('lll${ticketList[i]}');
+  //     DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+  //         .collection('raisedTickets')
+  //         .doc(ticketList[i])
+  //         .get();
+
+  //     if (documentSnapshot.data() != null) {
+  //       data = documentSnapshot.data() as Map<String, dynamic>;
+
+  //       asset = data['asset'] ?? '';
+  //       building = data['building'] ?? '';
+  //       date = data['date'] ?? '';
+  //       floor = data['floor'] ?? '';
+  //       // remark = data['remark'] ?? '';
+  //       room = data['room'] ?? '';
+  //       serviceProvider = data['serviceProvider'] ?? '';
+  //       work = data['work'] ?? '';
+  //     }
+  //     allData.add(asset);
+  //     allData.add(building);
+  //     allData.add(date);
+  //     // allData.add(remark);
+  //     allData.add(floor);
+  //     allData.add(room);
+  //     allData.add(serviceProvider);
+  //     allData.add(work);
+  //     rowData.add(allData);
+  //   }
+  // }

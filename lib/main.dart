@@ -1,6 +1,7 @@
 import 'package:admin/Provider/filteration_provider%20copy.dart';
 import 'package:admin/Provider/image_upload_provider.dart';
 import 'package:admin/Provider/menuUserPageProvider.dart';
+import 'package:admin/Provider/role_page_totalNum_provider.dart';
 import 'package:admin/dashboard/dashboard.dart';
 import 'package:admin/providers/assetsProvider.dart';
 import 'package:admin/providers/buildingProvider.dart';
@@ -45,7 +46,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => AllWorkProvider()),
         ChangeNotifierProvider(create: (context) => FilterProvider()),
         ChangeNotifierProvider(create: (context) => ImageUploadProvider()),
-        ChangeNotifierProvider(create: (context) => MenuUserPageProvider())
+        ChangeNotifierProvider(create: (context) => MenuUserPageProvider()),
+        ChangeNotifierProvider(
+            create: (context) => RolePageTotalNumProviderAdmin())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
