@@ -4,13 +4,14 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:admin/Provider/filteration_provider%20copy.dart';
+
+import 'package:admin/providers/filteration_provider.dart';
+import 'package:admin/providers/image_upload_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:admin/Provider/image_upload_provider.dart';
 
 class TotalUsers extends StatefulWidget {
   const TotalUsers({super.key});

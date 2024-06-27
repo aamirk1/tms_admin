@@ -1,12 +1,14 @@
-import 'package:admin/Provider/filteration_provider%20copy.dart';
-import 'package:admin/Provider/image_upload_provider.dart';
-import 'package:admin/Provider/menuUserPageProvider.dart';
 import 'package:admin/dashboard/dashboard.dart';
 import 'package:admin/providers/assetsProvider.dart';
 import 'package:admin/providers/buildingProvider.dart';
 import 'package:admin/providers/designationProvider.dart';
+import 'package:admin/providers/filteration_provider.dart';
 import 'package:admin/providers/floorProvider.dart';
+import 'package:admin/providers/image_upload_provider.dart';
+import 'package:admin/providers/menuUserPageProvider.dart';
+import 'package:admin/providers/role_page_totalNum_provider.dart';
 import 'package:admin/providers/roomProvider.dart';
+import 'package:admin/providers/userProvider.dart';
 import 'package:admin/providers/workProvider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +47,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => AllWorkProvider()),
         ChangeNotifierProvider(create: (context) => FilterProvider()),
         ChangeNotifierProvider(create: (context) => ImageUploadProvider()),
-        ChangeNotifierProvider(create: (context) => MenuUserPageProvider())
+        ChangeNotifierProvider(create: (context) => MenuUserPageProvider()),
+        ChangeNotifierProvider(create: (context) => AllUserProvider()),
+        ChangeNotifierProvider(
+            create: (context) => RolePageTotalNumProviderAdmin())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

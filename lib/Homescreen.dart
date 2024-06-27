@@ -372,7 +372,8 @@ class MasterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Master Screen'),
+        title: const Text('Master Screen',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
       ),
       body: const Center(
         child: Text('This is the Master Screen'),
@@ -400,7 +401,8 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile Screen'),
+        title: const Text('Profile Screen',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
       ),
       body: const Center(
         child: Text('This is the Profile Screen'),

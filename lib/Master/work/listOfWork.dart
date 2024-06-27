@@ -26,7 +26,8 @@ class _ListOfWorkState extends State<ListOfWork> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('List of Work'),
+        title: const Text('List of Work',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
               gradient:

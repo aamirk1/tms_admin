@@ -4,7 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ListOfAsset extends StatefulWidget {
-  const ListOfAsset({super.key});
+  const ListOfAsset(
+      {super.key,
+      required this.buildingNumber,
+      required this.floorNumber,
+      required this.roomNumber});
+  final String buildingNumber;
+  final String floorNumber;
+  final String roomNumber;
 
   @override
   State<ListOfAsset> createState() => _ListOfAssetState();
@@ -26,7 +33,8 @@ class _ListOfAssetState extends State<ListOfAsset> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('List of Asset'),
+        title: const Text('List of Asset',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
               gradient:
@@ -48,11 +56,11 @@ class _ListOfAssetState extends State<ListOfAsset> {
                       SingleChildScrollView(
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Container(
+                          child: SizedBox(
                             height: MediaQuery.of(context).size.height * 0.7,
                             child: ListView.builder(
                                 shrinkWrap: true,
-                                itemCount: value.assetList.length,
+                                itemCount: assetList.length,
                                 itemBuilder: (item, index) {
                                   return Column(
                                     children: [
@@ -71,7 +79,7 @@ class _ListOfAssetState extends State<ListOfAsset> {
                                         //   );
                                         // },
                                         title: Text(
-                                          value.assetList[index],
+                                          assetList[index],
                                           style: const TextStyle(
                                               color: Colors.black),
                                         ),
@@ -82,7 +90,10 @@ class _ListOfAssetState extends State<ListOfAsset> {
                                           ),
                                           onPressed: () {
                                             deleteAsset(
-                                              value.assetList[index],
+                                              widget.buildingNumber,
+                                              widget.floorNumber,
+                                              widget.roomNumber,
+                                              assetList[index],
                                             );
                                           },
                                         ),
@@ -119,8 +130,15 @@ class _ListOfAssetState extends State<ListOfAsset> {
 
   Future<void> fetchData() async {
     final provider = Provider.of<AllAssetProvider>(context, listen: false);
-    QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection('assets').get();
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('buildingNumbers')
+        .doc(widget.buildingNumber)
+        .collection('floorNumbers')
+        .doc(widget.floorNumber)
+        .collection('roomNumbers')
+        .doc(widget.roomNumber)
+        .collection('assets')
+        .get();
     if (querySnapshot.docs.isNotEmpty) {
       List<String> tempData = querySnapshot.docs.map((e) => e.id).toList();
       assetList = tempData;
@@ -129,9 +147,19 @@ class _ListOfAssetState extends State<ListOfAsset> {
     provider.setBuilderList(assetList);
   }
 
-  Future<void> deleteAsset(String asset) async {
+  Future<void> deleteAsset(String roomNumber, String buildingNumber,
+      String floorNumber, String asset) async {
     final provider = Provider.of<AllAssetProvider>(context, listen: false);
-    await FirebaseFirestore.instance.collection('assets').doc(asset).delete();
+    await FirebaseFirestore.instance
+        .collection('buildingNumbers')
+        .doc(buildingNumber)
+        .collection('floorNumbers')
+        .doc(floorNumber)
+        .collection('roomNumbers')
+        .doc(roomNumber)
+        .collection('assets')
+        .doc(asset)
+        .delete();
 
     provider.removeData(assetList.indexOf(asset));
   }
@@ -216,7 +244,11 @@ class _ListOfAssetState extends State<ListOfAsset> {
                                 child: const Text('Cancel')),
                             ElevatedButton(
                                 onPressed: () {
-                                  storeData(assetController.text)
+                                  storeData(
+                                          widget.buildingNumber,
+                                          widget.floorNumber,
+                                          widget.roomNumber,
+                                          assetController.text)
                                       .whenComplete(() {
                                     popupmessage('Asset added successfully!!');
                                   });
@@ -234,9 +266,19 @@ class _ListOfAssetState extends State<ListOfAsset> {
         });
   }
 
-  Future storeData(String asset) async {
+  Future storeData(String buildingNumber, String floorNumber, String roomNumber,
+      String asset) async {
     final provider = Provider.of<AllAssetProvider>(context, listen: false);
-    await FirebaseFirestore.instance.collection('assets').doc(asset).set({
+    await FirebaseFirestore.instance
+        .collection('buildingNumbers')
+        .doc(buildingNumber)
+        .collection('floorNumbers')
+        .doc(floorNumber)
+        .collection('roomNumbers')
+        .doc(roomNumber)
+        .collection('assets')
+        .doc(asset)
+        .set({
       'asset': asset,
     });
 

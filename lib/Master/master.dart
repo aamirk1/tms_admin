@@ -1,8 +1,7 @@
-import 'package:admin/Master/assets/listOfAsset.dart';
+import 'package:admin/Master/createUser/createUser.dart';
 import 'package:admin/Master/designation/listOfDesignation.dart';
 import 'package:admin/Master/itemMaster/itemMaster.dart';
 import 'package:admin/Master/work/listOfWork.dart';
-import 'package:admin/assignRoll/user.dart';
 import 'package:flutter/material.dart';
 
 class MasterHomeScreen extends StatefulWidget {
@@ -70,8 +69,7 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const ListOfDesignation()),
+                                builder: (context) => const CreateUser()),
                           );
                         },
                       ),
@@ -85,7 +83,7 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const ListOfDesignation()),
+                            builder: (context) => const CreateUser()),
                       );
                     },
                     child: Container(
@@ -100,7 +98,7 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                       child: const Padding(
                         padding: EdgeInsets.all(5.0),
                         child: Text(
-                          'Designation List',
+                          'Create User',
                           style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
                       ),
@@ -121,7 +119,7 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const ItemMaster()),
+                            builder: (context) => const ListOfDesignation()),
                       );
                     },
                     child: Container(
@@ -136,7 +134,7 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                       child: const Padding(
                         padding: EdgeInsets.all(5.0),
                         child: Text(
-                          'Item Master',
+                          'Designation List',
                           style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
                       ),
@@ -165,7 +163,8 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const ItemMaster()),
+                                builder: (context) =>
+                                    const ListOfDesignation()),
                           );
                         },
                       ),
@@ -201,10 +200,7 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => MenuUserPage(
-                                        society: '',
-                                        userId: '',
-                                      )),
+                                  builder: (context) => const ItemMaster()),
                             );
                           }),
                     ),
@@ -212,18 +208,27 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                   const SizedBox(
                     width: 30,
                   ),
-                  Container(
-                    alignment: Alignment.center,
-                    height: 70,
-                    width: 450,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        // color: Color.fromARGB(255, 179, 138, 248)
-                        gradient: const LinearGradient(
-                            colors: [Colors.purple, Colors.deepPurple])),
-                    child: const Text(
-                      'Role Assign',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ItemMaster()),
+                      );
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      height: 70,
+                      width: 450,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          // color: Color.fromARGB(255, 179, 138, 248)
+                          gradient: const LinearGradient(
+                              colors: [Colors.purple, Colors.deepPurple])),
+                      child: const Text(
+                        'Item Master',
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
                     ),
                   ),
                 ],
@@ -240,8 +245,9 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => const ListOfAsset()),
+                        MaterialPageRoute(builder: (context) {
+                          return const ListOfWork();
+                        }),
                       );
                     },
                     child: Container(
@@ -256,7 +262,7 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                       child: const Padding(
                         padding: EdgeInsets.all(5.0),
                         child: Text(
-                          'Assets',
+                          'Work List',
                           style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
                       ),
@@ -285,7 +291,7 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const ListOfAsset()),
+                                builder: (context) => const ListOfWork()),
                           );
                         },
                       ),
@@ -296,69 +302,69 @@ class _MasterHomeScreenState extends State<MasterHomeScreen> {
             ),
 
             // section first
-            Padding(
-              padding: const EdgeInsets.only(left: 100),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Card(
-                    shadowColor: Colors.deepPurple,
-                    elevation: 30,
-                    child: Container(
-                      height: 80,
-                      width: 150,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: const Color.fromARGB(255, 225, 223, 223),
-                              width: 2)),
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.supervised_user_circle_sharp,
-                          size: 70,
-                          color: Colors.deepPurple,
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const ListOfWork()),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 30,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ListOfWork()),
-                      );
-                    },
-                    child: Container(
-                      alignment: Alignment.center,
-                      height: 70,
-                      width: 450,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          //color: Color.fromARGB(255, 179, 138, 248)
-                          gradient: const LinearGradient(
-                              colors: [Colors.purple, Colors.deepPurple])),
-                      child: const Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Text(
-                          'Work List',
-                          style: TextStyle(color: Colors.white, fontSize: 20),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.only(left: 100),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.start,
+            //     children: [
+            //       Card(
+            //         shadowColor: Colors.deepPurple,
+            //         elevation: 30,
+            //         child: Container(
+            //           height: 80,
+            //           width: 150,
+            //           decoration: BoxDecoration(
+            //               border: Border.all(
+            //                   color: const Color.fromARGB(255, 225, 223, 223),
+            //                   width: 2)),
+            //           child: IconButton(
+            //             icon: const Icon(
+            //               Icons.supervised_user_circle_sharp,
+            //               size: 70,
+            //               color: Colors.deepPurple,
+            //             ),
+            //             onPressed: () {
+            //               Navigator.push(
+            //                 context,
+            //                 MaterialPageRoute(
+            //                     builder: (context) => const ListOfWork()),
+            //               );
+            //             },
+            //           ),
+            //         ),
+            //       ),
+            //       const SizedBox(
+            //         width: 30,
+            //       ),
+            //       InkWell(
+            //         onTap: () {
+            //           Navigator.push(
+            //             context,
+            //             MaterialPageRoute(
+            //                 builder: (context) => const ListOfWork()),
+            //           );
+            //         },
+            //         child: Container(
+            //           alignment: Alignment.center,
+            //           height: 70,
+            //           width: 450,
+            //           decoration: BoxDecoration(
+            //               borderRadius: BorderRadius.circular(20),
+            //               //color: Color.fromARGB(255, 179, 138, 248)
+            //               gradient: const LinearGradient(
+            //                   colors: [Colors.purple, Colors.deepPurple])),
+            //           child: const Padding(
+            //             padding: EdgeInsets.all(5.0),
+            //             child: Text(
+            //               'Work List',
+            //               style: TextStyle(color: Colors.white, fontSize: 20),
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),

@@ -27,18 +27,25 @@ class _TicketTableReportState extends State<TicketTableReport> {
     'User',
     'Service Provider',
     'Remarks',
-    'Picture',
+    // 'Picture',
     'Re-Assign (From/To)',
     'Revive',
   ];
-  List<dynamic> rowData = [];
+  List<List<String>> rowData = [];
   String asset = '';
   String floor = '';
   String building = '';
   String room = '';
   String date = '';
   String work = '';
-  String serviceProviders = '';
+  String service = '';
+  String tat = '';
+  String status = '';
+  String user = '';
+  String remark = '';
+  String picture = '';
+  String assign = '';
+  String revive = '';
 
   List<String> ticketList = [];
   // List<List<String>> rowData = [
@@ -76,6 +83,7 @@ class _TicketTableReportState extends State<TicketTableReport> {
         setState(() {});
       });
     });
+    print(columnName.length);
     super.initState();
   }
 
@@ -130,7 +138,8 @@ class _TicketTableReportState extends State<TicketTableReport> {
                   columnSpacing: 3.0,
                   columns: List.generate(columnName.length, (index) {
                     return DataColumn2(
-                      fixedWidth: index == 10 ? 300 : 110,
+                      fixedWidth: 150,
+                      // fixedWidth: index == 10 ? 300 : 110,
                       label: Align(
                         alignment: Alignment.center,
                         child: Text(
@@ -147,36 +156,17 @@ class _TicketTableReportState extends State<TicketTableReport> {
                     growable: true,
                     rowData.length, //change column name to row data
                     (index1) => DataRow2(
-                      cells: List.generate(15, (index2) {
-                        if (index2 == 10) {
-                          //serviceProvider
-                          return const DataCell(TextField()
-                              // DropdownWidget(`
-                              //   options: serviceProvider,
-                              //   selectedOption: selectedServiceProvider!,
-                              //   onChanged: (value) {
-                              //     setState(() {
-                              //       selectedServiceProvider = value!;
-                              //     });
-                              //   })
-                              );
-                        } else {
-                          //change column name to row data
-                          return
-                              //  allData[index1][index2] !=
-                              //         'Status'
-                              //     ?
-                              DataCell(Padding(
-                            padding: const EdgeInsets.only(bottom: 2.0),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                rowData[index1][index2].toString(),
-                                style: const TextStyle(color: Colors.black),
-                              ),
+                      cells: List.generate(columnName.length, (index2) {
+                        return DataCell(Padding(
+                          padding: const EdgeInsets.only(bottom: 2.0),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              rowData[index1][index2].toString(),
+                              style: const TextStyle(color: Colors.black),
                             ),
-                          ));
-                        }
+                          ),
+                        ));
                       }),
                     ),
                   ),
@@ -538,7 +528,7 @@ class _TicketTableReportState extends State<TicketTableReport> {
     Map<String, dynamic> data = Map();
 
     for (var i = 0; i < ticketList.length; i++) {
-      List<dynamic> allData = [];
+      List<String> allData = [];
       print('lll${ticketList[i]}');
       DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
           .collection('raisedTickets')
@@ -552,25 +542,33 @@ class _TicketTableReportState extends State<TicketTableReport> {
         building = data['building'] ?? '';
         date = data['date'] ?? '';
         floor = data['floor'] ?? '';
-        // remark = data['remark'] ?? '';
         room = data['room'] ?? '';
-        serviceProvider = data['serviceProvider'] ?? '';
+        service = data['serviceProvider'] ?? '';
         work = data['work'] ?? '';
+        tat = data['tat'] ?? 'tat';
+        status = data['open'] ?? 'open';
+        user = data['user'] ?? 'user11';
+        remark = data['remark'] ?? 'remark';
+        // picture = data['picture'] ?? 'picture';
+        assign = data['assign'] ?? 'assign';
+        revive = data['revive'] ?? 'revive';
       }
       allData.add(date);
-      allData.add('TAT');
-      allData.add('Ticket No.');
-      allData.add('OPEN');
+      allData.add(tat);
+      allData.add(ticketList[i]);
+      allData.add(status);
       allData.add(work);
       allData.add(building);
       allData.add(floor);
       allData.add(room);
       allData.add(asset);
-      allData.add('user');
-      allData.add(serviceProvider);
+      allData.add(user);
+      allData.add(service);
+      allData.add(remark);
+      // allData.add(picture);
+      allData.add(assign);
+      allData.add(revive);
       rowData.add(allData);
-      print('all$allData');
-      print('rowData $rowData');
     }
   }
 }

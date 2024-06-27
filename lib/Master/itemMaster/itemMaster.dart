@@ -30,7 +30,10 @@ class _ItemMasterState extends State<ItemMaster> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Building Number List'),
+        title: const Text(
+          'Building Number List',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
               gradient:
@@ -41,81 +44,79 @@ class _ItemMasterState extends State<ItemMaster> {
           ? const Center(child: CircularProgressIndicator())
           : Center(child:
               Consumer<AllBuildingProvider>(builder: (context, value, child) {
-              return  SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.9,
-                      width: MediaQuery.of(context).size.width * 0.6,
-                      child: Card(
-                        elevation: 10,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SingleChildScrollView(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.7,
-                                  child: ListView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: value.buildingList.length,
-                                      itemBuilder: (item, index) {
-                                        return Column(
-                                          children: [
-                                            ListTile(
-                                              onTap: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        FloorList(
-                                                      buildingNumber: value
-                                                          .buildingList[index],
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                              title: Text(
-                                                value.buildingList[index],
-                                                style: const TextStyle(
-                                                    color: Colors.black),
-                                              ),
-                                              trailing: IconButton(
-                                                icon: const Icon(
-                                                  Icons.delete,
-                                                  color: Colors.red,
-                                                ),
-                                                onPressed: () {
-                                                  deletebuildingNumber(value
-                                                      .buildingList[index]);
-                                                },
+              return SizedBox(
+                height: MediaQuery.of(context).size.height * 0.9,
+                width: MediaQuery.of(context).size.width * 0.6,
+                child: Card(
+                  elevation: 10,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.7,
+                            child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: value.buildingList.length,
+                                itemBuilder: (item, index) {
+                                  return Column(
+                                    children: [
+                                      ListTile(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => FloorList(
+                                                buildingNumber:
+                                                    value.buildingList[index],
                                               ),
                                             ),
-                                            const Divider(
-                                              color: Colors.black,
-                                            )
-                                          ],
-                                        );
-                                      }),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Align(
-                                alignment: Alignment.bottomRight,
-                                child: FloatingActionButton(
-                                  backgroundColor: Colors.deepPurple,
-                                  onPressed: () {
-                                    addbuildingNumber();
-                                  },
-                                  child: const Icon(Icons.add),
-                                ),
-                              ),
-                            )
-                          ],
+                                          );
+                                        },
+                                        title: Text(
+                                          value.buildingList[index],
+                                          style: const TextStyle(
+                                              color: Colors.black),
+                                        ),
+                                        trailing: IconButton(
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                          ),
+                                          onPressed: () {
+                                            deletebuildingNumber(
+                                                value.buildingList[index]);
+                                          },
+                                        ),
+                                      ),
+                                      const Divider(
+                                        color: Colors.black,
+                                      )
+                                    ],
+                                  );
+                                }),
+                          ),
                         ),
                       ),
-                    );
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: FloatingActionButton(
+                            backgroundColor: Colors.deepPurple,
+                            onPressed: () {
+                              addbuildingNumber();
+                            },
+                            child: const Icon(Icons.add),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              );
             })),
     );
   }
@@ -160,7 +161,7 @@ class _ItemMasterState extends State<ItemMaster> {
                             height: 40,
                             width: MediaQuery.of(context).size.width * 0.25,
                             child: TextFormField(
-                                 textInputAction: TextInputAction.done,
+                              textInputAction: TextInputAction.done,
                               expands: true,
                               maxLines: null,
                               controller: buildingNumberController,

@@ -1,3 +1,4 @@
+import 'package:admin/Master/itemMaster/listOfAsset.dart';
 import 'package:admin/providers/roomProvider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,8 @@ class _RoomListState extends State<RoomList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Room List'),
+        title: const Text('Room List',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
               gradient:
@@ -66,19 +68,20 @@ class _RoomListState extends State<RoomList> {
                                   return Column(
                                     children: [
                                       ListTile(
-                                        // onTap: () {
-                                        //   Navigator.push(
-                                        //     context,
-                                        //     MaterialPageRoute(
-                                        //       builder: (context) => RoomList(
-                                        //         floorNumber:
-                                        //             value.roomList[index],
-                                        //         buildingNumber:
-                                        //             widget.buildingNumber,
-                                        //       ),
-                                        //     ),
-                                        //   );
-                                        // },
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => ListOfAsset(
+                                                buildingNumber:
+                                                    widget.buildingNumber,
+                                                floorNumber: widget.floorNumber,
+                                                roomNumber:
+                                                    value.roomList[index],
+                                              ),
+                                            ),
+                                          );
+                                        },
                                         title: Text(
                                           value.roomList[index],
                                           style: const TextStyle(

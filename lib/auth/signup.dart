@@ -1,4 +1,4 @@
-import 'package:admin/Login/login.dart';
+import 'package:admin/auth/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 

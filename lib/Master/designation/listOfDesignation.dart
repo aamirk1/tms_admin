@@ -26,7 +26,8 @@ class _ListOfDesignationState extends State<ListOfDesignation> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('List of Designation'),
+        title: const Text('List of Designation',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
               gradient:

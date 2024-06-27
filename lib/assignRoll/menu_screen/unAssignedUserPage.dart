@@ -1,7 +1,7 @@
 // ignore: duplicate_ignore
 // ignore: file_names
 // ignore_for_file: file_names
-import 'package:admin/Provider/filteration_provider%20copy.dart';
+import 'package:admin/providers/filteration_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

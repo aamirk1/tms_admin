@@ -1,5 +1,5 @@
 import 'package:admin/Homescreen.dart';
-import 'package:admin/Login/signup.dart';
+import 'package:admin/auth/signup.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
