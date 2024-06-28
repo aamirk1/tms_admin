@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => MenuUserPageProvider()),
         ChangeNotifierProvider(create: (context) => AllUserProvider()),
         ChangeNotifierProvider(
-            create: (context) => RolePageTotalNumProviderAdmin())
+            create: (context) => RolePageTotalNumProviderAdmin()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

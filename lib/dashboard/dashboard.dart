@@ -1,6 +1,6 @@
 import 'package:admin/Homescreen.dart';
+import 'package:admin/utils/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -24,16 +24,17 @@ class _DashboardState extends State<Dashboard> {
   }
 
   List<String> ticketList = [];
-  List<String> columnName = [
-    'Report Generated\n On Date',
-    'Pending For\n (Days)',
-    'For Less\nThan 01 Day',
-    'Between\n 01 to 07',
-    'Between\n 08 to 14',
-    'Between\n 15 to 21',
-    'Between\n 22 to 28',
-    'For More Than\n 28 Days',
-  ];
+  String todayTicket = '';
+  // List<String> columnName = [
+  //   'Report Generated\n On Date',
+  //   'Pending For\n (Days)',
+  //   'For Less\nThan 01 Day',
+  //   'Between\n 01 to 07',
+  //   'Between\n 08 to 14',
+  //   'Between\n 15 to 21',
+  //   'Between\n 22 to 28',
+  //   'For More Than\n 28 Days',
+  // ];
   List<dynamic> rowData = [];
   String asset = '';
   String floor = '';
@@ -45,13 +46,15 @@ class _DashboardState extends State<Dashboard> {
   // String remark = '';
   String currentDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
   String day = '';
-
+  bool isHovered = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dashboard',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+        title: const Text(
+          'Dashboard',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
               gradient:
@@ -61,98 +64,366 @@ class _DashboardState extends State<Dashboard> {
       body: Column(
         children: [
           Center(
-            child: SizedBox(
+            child: Container(
+              margin: const EdgeInsets.only(top: 10.0),
               width: MediaQuery.of(context).size.width * 0.99,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  // Text(
-                  //   'Ticket Raised On ${DateTime.now().toString()}',
-                  //   style: const TextStyle(
-                  //       fontSize: 16,
-                  //       fontWeight: FontWeight.bold,
-                  //       color: Colors.black),
-                  // ),
-                  // const SizedBox(
-                  //   height: 20,
-                  // ),
-                  Padding(
-                    padding: const EdgeInsets.all(4),
-                    child: Container(
-                      padding: const EdgeInsets.all(2.0),
-                      height: MediaQuery.of(context).size.height * 0.75,
-                      width: MediaQuery.of(context).size.width * 0.99,
-                      child: DataTable2(
-                        minWidth: 7000,
-                        border: TableBorder.all(color: Colors.black),
-                        headingRowColor: const MaterialStatePropertyAll(
-                            Color.fromARGB(255, 84, 1, 99)),
-                        headingTextStyle: const TextStyle(
-                            color: Colors.white, fontSize: 50.0),
-                        columnSpacing: 3.0,
-                        columns: List.generate(columnName.length, (index) {
-                          return DataColumn2(
-                            fixedWidth: 150,
-                            // fixedWidth: index == 10 ? 300 : 110,
-                            label: Align(
-                              alignment: Alignment.center,
+                  Card(
+                    elevation: 20,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Container(
+                            height: 50,
+                            width: 170,
+                            color: purple,
+                            child: const Center(
                               child: Text(
-                                columnName[index],
-                                style: const TextStyle(
-                                  fontSize: 14.0,
-                                ),
+                                'Tickets \nRaised On',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: white),
                               ),
                             ),
-                          );
-                        }),
-                        rows: List.generate(
-                          growable: true,
-                          rowData.length, //change column name to row data
-                          (index1) => DataRow2(
-                            cells: List.generate(columnName.length, (index2) {
-                              if (index2 == 10) {
-                                //serviceProvider
-                                return const DataCell(TextField());
-                              } else {
-                                return DataCell(Padding(
-                                  padding: const EdgeInsets.only(bottom: 2.0),
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      rowData[index1][index2].toString(),
-                                      style:
-                                          const TextStyle(color: Colors.black),
-                                    ),
-                                  ),
-                                ));
-                              }
-                            }),
                           ),
-                        ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            height: 50,
+                            width: 170,
+                            color: purple,
+                            child: Center(
+                              child: Text(
+                                currentDate,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: white),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  )
+                  ),
+                  Card(
+                    elevation: 20,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Container(
+                            height: 50,
+                            width: 170,
+                            color: purple,
+                            child: const Center(
+                              child: Text(
+                                'Pending For',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: white),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            height: 50,
+                            width: 170,
+                            color: purple,
+                            child: Center(
+                              child: Text(
+                                ticketList.length.toString(),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: white),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Card(
+                    elevation: 20,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Container(
+                            height: 50,
+                            width: 170,
+                            color: purple,
+                            child: const Center(
+                              child: Text(
+                                'For Less\nThan 01 Day',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: white),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            height: 50,
+                            width: 170,
+                            color: purple,
+                            child: Center(
+                              child: Text(
+                                todayTicket.toString(),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: white),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
+          const SizedBox(
+            height: 2,
+          ),
+          const Divider(
+            thickness: 1,
+            color: Colors.black,
+          ),
+          Center(
+            child: Container(
+              margin: const EdgeInsets.only(top: 20.0),
+              width: MediaQuery.of(context).size.width * 0.99,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        height: 50,
+                        width: 170,
+                        color: purple,
+                        child: const Center(
+                          child: Text(
+                            '1 - 7 Days',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: white),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        height: 50,
+                        width: 170,
+                        color: purple,
+                        child: Center(
+                          child: Text(
+                            currentDate,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: white),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        height: 50,
+                        width: 170,
+                        color: purple,
+                        child: const Center(
+                          child: Text(
+                            '8 - 14 Days',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: white),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        height: 50,
+                        width: 170,
+                        color: purple,
+                        child: Center(
+                          child: Text(
+                            ticketList.length.toString(),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: white),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        height: 50,
+                        width: 170,
+                        color: purple,
+                        child: const Center(
+                          child: Text(
+                            '15 - 21',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: white),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        height: 50,
+                        width: 170,
+                        color: purple,
+                        child: Center(
+                          child: Text(
+                            ticketList.length.toString(),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: white),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        height: 50,
+                        width: 170,
+                        color: purple,
+                        child: const Center(
+                          child: Text(
+                            '22 - 28 Days',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: white),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        height: 50,
+                        width: 170,
+                        color: purple,
+                        child: Center(
+                          child: Text(
+                            ticketList.length.toString(),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: white),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        height: 50,
+                        width: 170,
+                        color: purple,
+                        child: const Center(
+                          child: Text(
+                            'More Than 28 Days',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: white),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        height: 50,
+                        width: 170,
+                        color: purple,
+                        child: Center(
+                          child: Text(
+                            ticketList.length.toString(),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: white),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
           Padding(
             padding: const EdgeInsets.only(
-                top: 8.0, left: 8.0, right: 18.0, bottom: 18),
+                top: 8.0, left: 8.0, right: 25.0, bottom: 18),
             child: Align(
               alignment: Alignment.bottomRight,
               child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: purple,
+                  ),
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => Home(
+                      MaterialPageRoute(builder: (context) {
+                        return Home(
                           adminId: widget.adminId,
-                        ),
-                      ),
+                        );
+                      }),
                     );
                   },
-                  child: const Text('Proceed')),
+                  child: const Text(
+                    'Proceed',
+                    style: TextStyle(color: white),
+                  )),
             ),
           ),
         ],
@@ -176,7 +447,7 @@ class _DashboardState extends State<Dashboard> {
 
     for (var i = 0; i < ticketList.length; i++) {
       List<dynamic> allData = [];
-      print('lll${ticketList[i]}');
+
       DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
           .collection('raisedTickets')
           .doc(ticketList[i])
@@ -184,39 +455,16 @@ class _DashboardState extends State<Dashboard> {
 
       if (documentSnapshot.data() != null) {
         data = documentSnapshot.data() as Map<String, dynamic>;
-
-        asset = data['asset'] ?? '';
-        building = data['building'] ?? '';
-        date = data['date'] ?? '';
-        floor = data['floor'] ?? '';
-        room = data['room'] ?? '';
-        serviceProvider = data['serviceProvider'] ?? '';
-        work = data['work'] ?? '';
-        day = data['date'].toString().substring(0, 2);
       }
-      // print('day $day');
-      allData.add(date);
-      allData.add(day);
+      date = data['date'] ?? 'N/A';
+
       // Index = 2
       if (currentDate == date) {
-        allData.add(ticketList.length);
+        todayTicket = ticketList.length.toString();
       } else {
-        allData.add('0');
+        todayTicket = '0';
       }
-
-      // Index = 3
-      // if (day=>7) {
-      allData.add(ticketList.length);
-      // } else {
-      //   allData.add('0');
-      // }
-
-      // allData.add(remark);
-      allData.add(floor);
-      allData.add(room);
-      allData.add(serviceProvider);
-      allData.add(work);
-      rowData.add(allData);
+      print('todayTicket $todayTicket');
     }
   }
 }

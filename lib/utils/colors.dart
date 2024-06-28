@@ -1,8 +1,5 @@
-
 import 'package:flutter/material.dart';
-class Color{
-      static const white = Colors.white;
-      static const black = Colors.black;
-      static const purple = Colors.purple;
 
-}
+const white = Colors.white;
+const black = Colors.black;
+const purple = Colors.purple;
